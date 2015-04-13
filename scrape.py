@@ -4,6 +4,8 @@ import csv
 
 from bs4 import BeautifulSoup, SoupStrainer
 
+base_url="http://www.boxofficemojo.com/"
+
 def link_data_saver(linkdict):
     with open("boxofficemojo_link_data.csv", "wb") as csv_file:
         writer = csv.writer(csv_file)
@@ -53,24 +55,26 @@ def link_grabber(url):
     except urllib2.HTTPError:
         print "404 Error"
         return set()
+    except urllib2.URLError:
+        print "URLError"
+        return set()
     for link in BeautifulSoup(page, parse_only=SoupStrainer('a')):
         if link.has_attr('href'):
-            if link['href'][:4] != 'http':
-                link_list.add(link['href'])         
+            if link['href'][:4] != 'http' and link['href'][:2] != './':
+                link = link['href'][1:] if link['href'][0] == '/' else link['href']
+                link_list.add(link)         
     return link_list
 
 #makes a dictionary where each key is a url and each value is a bool indicating whether or not the page has been scraped for links
-base_url="http://www.boxofficemojo.com"
-master_dict = {base_url: False}
 
-for _ in range(2):
+master_dict = {base_url: False}
+for _ in range(3):
     #go through all of the links grabbed and checks for ones that havent been scraped
     unfinished_links = [link for link,record in master_dict.iteritems() if record == False]
     for index, new_link in enumerate(unfinished_links):
         #check whether dict item already exists, if it does then do nothing. if it does not then add with value False
         for link in link_grabber(new_link):
-            if link[0]!= '/': link = '/' + link
-            full_link = base_url+link
+            full_link = base_url if link == base_url else base_url+link
             if full_link not in master_dict: master_dict.update({full_link: False})
         master_dict[new_link] = True
 
