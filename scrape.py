@@ -2,9 +2,21 @@ import urllib2
 import re
 import csv
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, SoupStrainer
 
-headers = ["movie title", "domestic total gross", "release date", "runtime", "rating", "data source"]
+def link_data_saver(linkdict):
+    with open("boxofficemojo_link_data.csv", "wb") as csv_file:
+        writer = csv.writer(csv_file)
+        for key, value in linkdict.items():
+            writer.writerow([key, value])
+
+def movie_data_saver(datadict):
+    with open("boxofficemojo_movie_data.csv", "wb") as csv_file:
+        headers = ["movie title", "domestic total gross", "release date", "runtime", "rating"]
+        dict_writer = csv.DictWriter(csv_file, headers)
+        dict_writer.writeheader()
+        dict_writer.writerows(datadict)
+
 
 def get_movie_value(soup, field_name):
     """
@@ -18,12 +30,6 @@ def get_movie_value(soup, field_name):
     else: 
         return None
 
-def save_data(datadict):
-    with open("boxofficemojo_data.csv", "wb") as csv_file:
-        dict_writer = csv.DictWriter(csv_file, headers)
-        dict_writer.writeheader()
-        dict_writer.writerows(datadict)
-
 def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm"):
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
@@ -36,17 +42,55 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm"):
     release_date = get_movie_value(soup, "Release Date")
     return dict(zip(headers, [title_string, dtg, release_date, runtime, rating, url]))
 
-def page_grabber(base_url="boxofficemojo.com"):
-    total_set_of_pages = set()
+def link_grabber(url):
+    '''
+    grabs all the links from a page and returns a list of them
+    '''
+    link_list = {url}
+    print "processing " + url
+    try:
+        page = urllib2.urlopen(url)
+    except urllib2.HTTPError:
+        print "404 Error"
+        return set()
+    for link in BeautifulSoup(page, parse_only=SoupStrainer('a')):
+        if link.has_attr('href'):
+            if link['href'][:4] != 'http':
+                link_list.add(link['href'])         
+    return link_list
 
-    total_set_of_pages.add(base_url)
-    return total_set_of_pages
+#makes a dictionary where each key is a url and each value is a bool indicating whether or not the page has been scraped for links
+base_url="http://www.boxofficemojo.com"
+master_dict = {base_url: False}
+
+for _ in range(2):
+    #go through all of the links grabbed and checks for ones that havent been scraped
+    unfinished_links = [link for link,record in master_dict.iteritems() if record == False]
+    for index, new_link in enumerate(unfinished_links):
+        #check whether dict item already exists, if it does then do nothing. if it does not then add with value False
+        for link in link_grabber(new_link):
+            if link[0]!= '/': link = '/' + link
+            full_link = base_url+link
+            if full_link not in master_dict: master_dict.update({full_link: False})
+        master_dict[new_link] = True
+
+link_data_saver(master_dict)
+
+# master_dict.setdefault({base_url: False})
+
+'''
+begin at base url
+scrape base url
+add scraped base links to master_dict with link appended to base_url for complete path
+mark base url as scraped (True)
+go to any url in master_dict that is still False
+scrape it and add links to master_dict and mark as True
+end when no more links still False
+'''
 
 
-url_list = page_grabber("http://www.boxofficemojo.com/movies/?id=biglebowski.htm")
-print url_list
+
+
 
 #movie_data = [page_parser(url) for url in url_list]
-#check whether it is a legitimate movie page before calling page_parser
-
-#save_data(movie_data)
+#check whether it is a legitimate movie page before calling page_parser by whether it begins with /movies
