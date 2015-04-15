@@ -2,11 +2,9 @@ import urllib2
 import re
 import json
 from pprint import pprint
-import pickle
 import time
-from random import randint
-from time import sleep
 from bs4 import BeautifulSoup, SoupStrainer
+from brinery import *
 
 
 def link_data_saver(linklist, filename="boxofficemojo_link_data.txt"):
@@ -23,36 +21,6 @@ def movie_data_saver(datadict):
 def read_main_dict():
     with open("boxofficemojo_movie_data.json", "rb") as json_file:
         return json.load(json_file)
-
-#BRINERY
-def dump_pickle(x, filename="page_data.pkl"):
-    with open(filename, "wb") as f:
-        pickle.dump(x, f)
-
-def grab_pickle(filename="page_data.pkl"):
-    with open(filename, "rb") as f:
-        return pickle.load(f)
-
-def brine_time(linklist, filename="page_data.pkl", maxsleep=None, cap=None):
-    '''
-    pickle ALL THE PAGES. set a maximum amount of seconds to sleep if the site you're pickeling is particularly sour.
-    returns a list of sour pickle pages that did not get downloaded.
-    '''
-    temp_dict = {}
-    sour_pickle_jar = []
-    for index, url in enumerate(linklist):
-        if index == cap: break
-        print("Brining "+url)
-        try:
-            page = urllib2.urlopen(url).read()
-            if maxsleep: sleep(randint(1, maxsleep))
-        except Exception as e:
-            print("Sour Pickle!")
-            print e
-            sour_pickle_jar.append(url)
-        temp_dict.update({url: page})
-    dump_pickle(temp_dict, filename)
-    return sour_pickle_jar
 
 def list_splitter(list, size=7):
     '''
@@ -99,7 +67,9 @@ def movie_links(base_url="http://www.boxofficemojo.com"):
     return master_dict
 
 def boxofficemojo_error_correction(main_dict=read_main_dict()):
-# grab all the movies on site and their initial data plus links to their original pages and correct bad data
+    '''
+    grab all the movies on site and their initial data plus links to their original pages and correct bad data
+    '''
     temp_dict = main_dict
     temp_dict['Waiting for "Superman"'] = temp_dict.pop("None")
     temp_dict['Waiting for "Superman"']['title'] = 'Waiting for "Superman"'
@@ -108,9 +78,9 @@ def boxofficemojo_error_correction(main_dict=read_main_dict()):
     movie_data_saver(temp_dict)
 
 def get_movie_value(soup, field_name):
-    """
+    '''
     takes a string attr of a movie on the page, and returns the string in the next sibling object (the value for that attribute)
-    """
+    '''
     obj = soup.find(text=re.compile(field_name))
     # if not obj: return None
     if not obj: raise Exception("cant find reference object")
@@ -165,10 +135,12 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
 # # refresh boxofficemojo masterdict
 # boxofficemojo_error_correction(movie_links())
 
-# pickle boxofficemojo pages
-list_of_links = [item['boxofficemojo url'] for item in read_main_dict().values()]
-link_data_saver(list_of_links, "boxofficemojo_movie_page_links.txt")
-print("\nSour pickle jar: "+str( brine_time(list_of_links, cap=None) ))
+# # pickle boxofficemojo pages
+# list_of_links = [item['boxofficemojo url'] for item in read_main_dict().values()]
+# link_data_saver(list_of_links, "boxofficemojo_movie_page_links.txt")
+# print("\nSour pickle jar: "+str( brine_time(list_of_links, cap=10) ))
+
+#Sour pickle jar: [u'http://www.boxofficemojo.com/movies/?id=elizabeth\xa0.htm', u'http://www.boxofficemojo.com/movies/?id=sheshavingababy.htm', u'http://www.boxofficemojo.com/movies/?id=mymotherlikeswomen.htm', u'http://www.boxofficemojo.com/movies/?id=likefatherlikeson.htm', u'http://www.boxofficemojo.com/movies/?id=simpleplan\xa0.htm', u'http://www.boxofficemojo.com/movies/?id=armyofcrime.htm', u'http://www.boxofficemojo.com/movies/?id=fled.htm', u'http://www.boxofficemojo.com/movies/?id=intheshadowofthemoon.htm', u'http://www.boxofficemojo.com/movies/?id=behavingbadly.htm']
 
 
 # # testing page parsing
