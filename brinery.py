@@ -9,10 +9,13 @@ Usage examples:
 list_of_links = [item['boxofficemojo url'] for item in read_main_dict().values()]
 print("\nSour pickle jar: " + str(brine_time(list_of_links, cap=10)))
 
-# depickle all the pages
-for item in main_dict.values():
-    url = item['boxofficemojo url']
-    depickled_page = debrine(url)
+# debrine a single page
+depickled_page = debrine(url)
+
+# debrine all the pages
+pickled = grab_pickle()
+for item in pickled:
+    depickled_page = pickled[url]
 '''
 
 import pickle
@@ -41,6 +44,21 @@ def debrine(url, filename="page_data.pkl"):
     pickledict = grab_pickle(filename)
     return pickledict[url]
 
+def single_pickle(url=None, filename="page_data.pkl"):
+    '''
+    add a single pickle to try and repair sour pickles
+    '''
+    if not url: url = str(input("sour url: "))
+    temp_dict = grab_pickle(filename)
+    try:
+        page = urllib2.urlopen(url).read()
+        temp_dict[url] = page
+        dump_pickle(temp_dict, filename)
+        print("Cool!")
+    except:
+        print("Still sour!")
+        #except not working for 'http://www.boxofficemojo.com/movies/?id=elizabeth\xa0.htm'
+
 def brine_time(linklist, filename="page_data.pkl", maxsleep=None, cap=None):
     '''
     pickle ALL THE PAGES. set a maximum amount of seconds to sleep if the site you're pickeling is particularly sour.
@@ -58,9 +76,11 @@ def brine_time(linklist, filename="page_data.pkl", maxsleep=None, cap=None):
         except Exception as e:
             print("Sour Pickle! Tastes like a" + str(e))
             sour_pickle_jar.append(url)
+            temp_dict.update({url: e}) # comment this out if you don't want pages with download errors included in the dictionary at all
     dump_pickle(temp_dict, filename)
-    with open("sour_pickle_jar.txt", "wb") as f:
-        for item in sour_pickle_jar:
-            f.write(item)
-            f.write("\n")
+    if sour_pickle_jar:
+        with open("sour_pickle_jar.txt", "wb") as f:
+            for item in sour_pickle_jar:
+                f.write(item)
+                f.write("\n")
     return sour_pickle_jar

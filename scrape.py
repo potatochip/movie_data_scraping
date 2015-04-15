@@ -75,6 +75,19 @@ def boxofficemojo_error_correction(main_dict=read_main_dict()):
     temp_dict['Waiting for "Superman"']['title'] = 'Waiting for "Superman"'
     temp_dict['Offender']['studio'] = 'n/a'
     temp_dict['Toy Story 2 (3D)']['studio'] = 'BV'
+    #below not working, whatev. edinting manually
+    #getting Traceback (most recent call last):
+        #   File "scrape.py", line 142, in <module>
+        #     boxofficemojo_error_correction(movie_links())
+        #   File "scrape.py", line 78, in boxofficemojo_error_correction
+        #     temp_dict['Elizabeth'] = temp_dict.pop(unicode('Elizabeth\u00a0'))
+        # KeyError: u'Elizabeth\\u00a0'
+    # temp_dict['Elizabeth'] = temp_dict.pop('Elizabeth\u00a0')
+    # temp_dict['Elizabeth']['title'] = 'Elizabeth'
+    # temp_dict['Elizabeth']['boxofficemojo url'] = "http://www.boxofficemojo.com/movies/?id=elizabeth%A0.htm"
+    # temp_dict['A Simple Plan'] = temp_dict.pop('A Simple Plan\u00a0')
+    # temp_dict['A Simple Plan']['title'] = 'A Simple Plan'
+    # temp_dict['A Simple Plan']['boxofficemojo url'] = "http://www.boxofficemojo.com/movies/?id=simpleplan%A0.htm"
     movie_data_saver(temp_dict)
 
 def get_movie_value(soup, field_name):
@@ -132,30 +145,31 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
 
     return dict(zip(headers, [url, runtime, rating, genres]))
 
-# # refresh boxofficemojo masterdict
-# boxofficemojo_error_correction(movie_links())
-
-# # pickle boxofficemojo pages
-# list_of_links = [item['boxofficemojo url'] for item in read_main_dict().values()]
-# link_data_saver(list_of_links, "boxofficemojo_movie_page_links.txt")
-# print("\nSour pickle jar: "+str( brine_time(list_of_links, cap=10) ))
-
-#Sour pickle jar: [u'http://www.boxofficemojo.com/movies/?id=elizabeth\xa0.htm', u'http://www.boxofficemojo.com/movies/?id=sheshavingababy.htm', u'http://www.boxofficemojo.com/movies/?id=mymotherlikeswomen.htm', u'http://www.boxofficemojo.com/movies/?id=likefatherlikeson.htm', u'http://www.boxofficemojo.com/movies/?id=simpleplan\xa0.htm', u'http://www.boxofficemojo.com/movies/?id=armyofcrime.htm', u'http://www.boxofficemojo.com/movies/?id=fled.htm', u'http://www.boxofficemojo.com/movies/?id=intheshadowofthemoon.htm', u'http://www.boxofficemojo.com/movies/?id=behavingbadly.htm']
+def refresh_masterdict():
+    boxofficemojo_error_correction(movie_links())
 
 
-# # testing page parsing
-# url = "http://www.boxofficemojo.com/movies/?id=biglebowski.htm"
-# pickled_data = grab_pickle()
-# print pickled_data[url]
-# pprint(page_parser(pickled=pickled_data[url]))
-# # multple pages
-# start_time = time.time()
-# main_dict = read_main_dict()
-# for index, item in enumerate(main_dict.values()):
-#     if index == 100: break
-#     url = item['boxofficemojo url']
-#     pprint(page_parser(url, pickled=pickled_data[url]))
-# pprint("Checked {0} links in {1} seconds.".format(index, time.time() - start_time))
+def pickle_boxofficemojo_pages():
+    list_of_links = [item['boxofficemojo url'] for item in read_main_dict().values()]
+    link_data_saver(list_of_links, "boxofficemojo_movie_page_links.txt")
+    print("\nSour pickle jar: "+str( brine_time(list_of_links, cap=10) ))
+
+def the_big_merge():
+    pass
+
+# testing page parsing
+url = "http://www.boxofficemojo.com/movies/?id=biglebowski.htm"
+pickled = grab_pickle()
+pprint(page_parser(url, pickled=pickled[url]))
+# multple pages
+start_time = time.time()
+main_dict = read_main_dict()
+print(read_main_dict()[''])
+for index, item in enumerate(main_dict.values()):
+    if index == 10: break
+    url = item['boxofficemojo url']
+    pprint(page_parser(url, pickled=pickled[url]))
+pprint("Checked {0} links in {1} seconds.".format(index, time.time() - start_time))
 
 
 
