@@ -8,16 +8,9 @@ from random import randint
 from time import sleep
 from bs4 import BeautifulSoup, SoupStrainer
 
-def dump_pickle(x, filename="page_data.pkl"):
-    with open(filename, "wb") as f:
-        pickle.dump(x, f)
 
-def grab_pickle(filename="page_data.pkl"):
-    with open(filename, "rb") as f:
-        return pickle.load(f)
-
-def link_data_saver(linklist):
-    with open("boxofficemojo_link_data.txt", "wb") as txt_file:
+def link_data_saver(linklist, filename="boxofficemojo_link_data.txt"):
+    with open(filename, "wb") as txt_file:
         for item in linklist: 
             txt_file.write(item.encode("UTF-8"))
             txt_file.write("\n")
@@ -31,22 +24,41 @@ def read_main_dict():
     with open("boxofficemojo_movie_data.json", "rb") as json_file:
         return json.load(json_file)
 
-def list_splitter(list, size=7):
-    return[ list[i:i+size] for i  in range(0, len(list), size) ]
+#BRINERY
+def dump_pickle(x, filename="page_data.pkl"):
+    with open(filename, "wb") as f:
+        pickle.dump(x, f)
 
-def brine_time(main_dict=read_main_dict()):
-    #pickle ALL THE PAGES
+def grab_pickle(filename="page_data.pkl"):
+    with open(filename, "rb") as f:
+        return pickle.load(f)
+
+def brine_time(linklist, filename="page_data.pkl", maxsleep=None, cap=None):
+    '''
+    pickle ALL THE PAGES. set a maximum amount of seconds to sleep if the site you're pickeling is particularly sour.
+    returns a list of sour pickle pages that did not get downloaded.
+    '''
     temp_dict = {}
-    for index, item in enumerate(main_dict.values()):
-        url = item['boxofficemojo url']
+    sour_pickle_jar = []
+    for index, url in enumerate(linklist):
+        if index == cap: break
         print("Brining "+url)
         try:
             page = urllib2.urlopen(url).read()
-            sleep(randint(1,10))
-        except:
+            if maxsleep: sleep(randint(1, maxsleep))
+        except Exception as e:
             print("Sour Pickle!")
+            print e
+            sour_pickle_jar.append(url)
         temp_dict.update({url: page})
-    dump_pickle(temp_dict)
+    dump_pickle(temp_dict, filename)
+    return sour_pickle_jar
+
+def list_splitter(list, size=7):
+    '''
+    splits a list into separate lists of equal size
+    '''
+    return[ list[i:i+size] for i  in range(0, len(list), size) ]
 
 def link_grabber(url, base_url="http://www.boxofficemojo.com"):
     '''
@@ -86,9 +98,9 @@ def movie_links(base_url="http://www.boxofficemojo.com"):
     link_data_saver(link_list)
     return master_dict
 
-def boxofficemojo_master_list_grab():
+def boxofficemojo_error_correction(main_dict=read_main_dict()):
 # grab all the movies on site and their initial data plus links to their original pages and correct bad data
-    temp_dict = movie_links()
+    temp_dict = main_dict
     temp_dict['Waiting for "Superman"'] = temp_dict.pop("None")
     temp_dict['Waiting for "Superman"']['title'] = 'Waiting for "Superman"'
     temp_dict['Offender']['studio'] = 'n/a'
@@ -141,19 +153,23 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
     #     actors_string = actors_block.text
     #     name_list = [a for a in re.split(r'([A-Z][a-z]*)', actors_string) if a]
     #     for name in name_list:
-        
+
     #     # caps_list = [word for word in actors_string if word[0].isupper() ]
     #     actors = unicode()
     # except:
     #     print("\n"+"*ACTOR FAIL: "+url)
+    # grab the <a> tags and the <br> tags and combine
 
     return dict(zip(headers, [url, runtime, rating, genres]))
 
 # # refresh boxofficemojo masterdict
-# boxofficemojo_master_list_grab()
+# boxofficemojo_error_correction(movie_links())
 
 # pickle boxofficemojo pages
-brine_time()
+list_of_links = [item['boxofficemojo url'] for item in read_main_dict().values()]
+link_data_saver(list_of_links, "boxofficemojo_movie_page_links.txt")
+print("\nSour pickle jar: "+str( brine_time(list_of_links, cap=None) ))
+
 
 # # testing page parsing
 # url = "http://www.boxofficemojo.com/movies/?id=biglebowski.htm"
@@ -168,8 +184,6 @@ brine_time()
 #     url = item['boxofficemojo url']
 #     pprint(page_parser(url, pickled=pickled_data[url]))
 # pprint("Checked {0} links in {1} seconds.".format(index, time.time() - start_time))
-
-
 
 
 
