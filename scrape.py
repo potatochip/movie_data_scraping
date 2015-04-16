@@ -75,7 +75,7 @@ def boxofficemojo_error_correction(main_dict=read_main_dict()):
     temp_dict['Waiting for "Superman"']['title'] = 'Waiting for "Superman"'
     temp_dict['Offender']['studio'] = 'n/a'
     temp_dict['Toy Story 2 (3D)']['studio'] = 'BV'
-    #below not working, whatev. edinting manually
+    #below not working, whatev. editing manually
     #getting Traceback (most recent call last):
         #   File "scrape.py", line 142, in <module>
         #     boxofficemojo_error_correction(movie_links())
@@ -115,13 +115,13 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
         #grab runtime
         runtime = unicode(get_movie_value(soup, "Runtime"))
     except:
-        print("\n"+"*RUNTIME FAIL: "+url)
+        print("\n"+"*RUNTIME FAIL*: "+url)
         runtime = "n/a"
     try:
         #grab rating
         rating =  unicode(get_movie_value(soup, "MPAA Rating"))
     except:
-        print("\n"+"*RATING FAIL: "+url)
+        print("\n"+"*RATING FAIL*: "+url)
         rating = 'n/a'
     try:
         #grab genre
@@ -131,7 +131,7 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
             genres.append(unicode(get_movie_value(soup, 'Genre: ')))
         # if not genres: raise Exception
     except:
-        print("\n"+"*GENRE FAIL: "+url)
+        print("\n"+"*GENRE FAIL*: "+url)
     try:
         #grab actors
         try:
@@ -140,34 +140,50 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
             try:
                 actors_block = soup.find(text=re.compile("Actor:")).next.next
             except:
-                print("\n"+"*NO ACTORS FOUND: "+url)
+                print("\n"+"*NO ACTORS FOUND*: "+url)
         actors_string = actors_block.text
         messy_list = [a for a in re.split(r'([A-Z][a-z]*)', actors_string) if a]
         # [u'Jeff', u' ', u'Bridges', u'John', u' ', u'Goodman', u'Julianne', u' ', u'Moore', u'Steve', u' ', u'Buscemi', u'Philip', u' ', u'Seymour', u' ', u'Hoffman', u'Tara', u' ', u'Reid', u'Sam', u' ', u'Elliott', u'* (', u'Narrator', u')']
+        # http://www.boxofficemojo.com/movies/?id=road08.htm also good example
+        # and http://www.boxofficemojo.com/movies/?id=talktome.htm'
         name_list = []
         previous_name = None
         temp_name = ""
         messy_length = len(messy_list)
-        #fix that mess
-        error_list = [u' ', u"'", u'-', u'. ', u'Mc', u'Mac', u'De', u'Di', u'Da', u'Du', u' the ']
+        # fix that mess
+        parens_list = [u'* (', u'. (', u' (', u')']
+        error_list = [u' ', u"'", u'-', u'. ', u'.', u'Mc', u'Mac', u'De', u'Di', u'Da', u'Du', u' the ']
+        paren_check = False
+        dot_check = False
         for index, name in enumerate(messy_list):
-            if name == "'" or name == '-':
+            if paren_check == True: 
                 pass
+            # paren error checking not working
+            # elif name in parens_list:
+            #     paren_check = True
+            #     if name == u'. (': temp_name += '.'
+            #     if name == u')':
+            #         temp_name += name
+            #         paren_check, dot_check = False, False
+            # elif previous_name == u')':
+            #     temp_name = name
             elif name not in error_list and previous_name not in error_list:
                 name_list.append(temp_name)
-                temp_name = ""
+                temp_name = name
             elif index == messy_length-1:
                 temp_name += name
                 name_list.append(temp_name)
-            temp_name += name
+            else:
+                temp_name += name
             previous_name = name
         name_list = filter(None, name_list)
         first_pass = name_list
+        # add previous name check for close parens
         #remove any asterisks
-        for index, item in enumerate(name_list):
-            if item == u'* (':
-                first_pass = name_list[:index]
-                break
+        # for index, item in enumerate(name_list):
+        #     if item == u'* (':
+        #         first_pass = name_list[:index]
+        #         break
         second_pass = first_pass
         for index, item in enumerate(first_pass):
             if item == u'*':
@@ -175,13 +191,25 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
             if item == u'.*':
                 second_pass.pop(index)
                 second_pass[index-1] += '.'
+        # remove any parens
         third_pass = second_pass
-        # open_paren_index = 0
-        # dot_open_index = 0
-        # close_paren_index = 0
-        # for index, item in enumerate(third_pass):
-        #     if item == '. (':
-
+        # open_paren_index, splat_open_index, dot_open_index, close_paren_index = 0,0,0,0
+        # for index, item in enumerate(second_pass):
+        #     if item == u'* (': splat_open_index = index
+        #     if item == u'. (': dot_open_index = index
+        #     if item == u' (': open_paren_index = index
+        #     if item == u')':
+        #         if open_paren_index != 0:
+        #             for i in range(index - open_paren_index - 1): third_pass.pop(open_paren_index + i)
+        #         elif splat_open_index != 0:
+        #             for i in range(index - splat_open_index - 1): third_pass.pop(splat_open_index + i)
+        #         elif dot_open_index != 0:
+        #             for i in range(index - dot_open_index):
+        #                 third_pass.pop(dot_open_index + i)
+        #                 third_pass[dot_open_index - 1] += '.'
+        #         else:
+        #             print('*PARENS FAIL*')
+        #         open_paren_index, splat_open_index, dot_open_index, close_paren_index = 0,0,0,0
         actors = third_pass
     except:
         actors = []
