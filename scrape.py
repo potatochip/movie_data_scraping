@@ -1,5 +1,6 @@
 import urllib2
 import re
+import sys
 import json
 from pprint import pprint
 import time
@@ -105,7 +106,13 @@ def get_movie_value(soup, field_name):
         raise Exception('cant find data for reference object')
 
 def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", pickled=None):
-    page = urllib2.urlopen(url) if pickled == None else pickled
+    url_fail_list = []
+    try:
+        page = urllib2.urlopen(url) if pickled == None else pickled
+    except:
+        # if url can't be found in pickle
+        url_fail_list.append(url)
+    link_data_saver(url_fail_list, "url_parse_fail_log.txt")
     soup = BeautifulSoup(page)
 
     headers = ["url", "runtime", "rating", "genres", "actors"]
@@ -154,19 +161,17 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
         parens_list = [u'* (', u'. (', u' (', u')']
         error_list = [u' ', u"'", u'-', u'. ', u'.', u'Mc', u'Mac', u'De', u'Di', u'Da', u'Du', u' the ']
         paren_check = False
-        dot_check = False
         for index, name in enumerate(messy_list):
-            if paren_check == True: 
-                pass
-            # paren error checking not working
-            # elif name in parens_list:
-            #     paren_check = True
-            #     if name == u'. (': temp_name += '.'
-            #     if name == u')':
-            #         temp_name += name
-            #         paren_check, dot_check = False, False
-            # elif previous_name == u')':
-            #     temp_name = name
+            #corrects parens
+            if name in parens_list or paren_check == True:
+                paren_check = True
+                if name == u'. (': temp_name += '.'
+                if name in [u'* (', u'. (', u' (']:
+                    name_list.append(temp_name)
+                    temp_name = ""
+                if name == u')':
+                    paren_check = False
+            #corrects irregular characters
             elif name not in error_list and previous_name not in error_list:
                 name_list.append(temp_name)
                 temp_name = name
@@ -177,40 +182,15 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
                 temp_name += name
             previous_name = name
         name_list = filter(None, name_list)
-        first_pass = name_list
-        # add previous name check for close parens
-        #remove any asterisks
-        # for index, item in enumerate(name_list):
-        #     if item == u'* (':
-        #         first_pass = name_list[:index]
-        #         break
-        second_pass = first_pass
-        for index, item in enumerate(first_pass):
+        #corrects asterisks without parens
+        second_pass = name_list
+        for index, item in enumerate(name_list):
             if item == u'*':
                 second_pass.pop(index)
             if item == u'.*':
                 second_pass.pop(index)
                 second_pass[index-1] += '.'
-        # remove any parens
-        third_pass = second_pass
-        # open_paren_index, splat_open_index, dot_open_index, close_paren_index = 0,0,0,0
-        # for index, item in enumerate(second_pass):
-        #     if item == u'* (': splat_open_index = index
-        #     if item == u'. (': dot_open_index = index
-        #     if item == u' (': open_paren_index = index
-        #     if item == u')':
-        #         if open_paren_index != 0:
-        #             for i in range(index - open_paren_index - 1): third_pass.pop(open_paren_index + i)
-        #         elif splat_open_index != 0:
-        #             for i in range(index - splat_open_index - 1): third_pass.pop(splat_open_index + i)
-        #         elif dot_open_index != 0:
-        #             for i in range(index - dot_open_index):
-        #                 third_pass.pop(dot_open_index + i)
-        #                 third_pass[dot_open_index - 1] += '.'
-        #         else:
-        #             print('*PARENS FAIL*')
-        #         open_paren_index, splat_open_index, dot_open_index, close_paren_index = 0,0,0,0
-        actors = third_pass
+        actors = second_pass
     except:
         actors = []
     return dict(zip(headers, [url, runtime, rating, genres, actors]))
@@ -224,25 +204,46 @@ def pickle_boxofficemojo_pages():
     print("\nSour pickle jar: "+str( brine_time(list_of_links, cap=10) ))
 
 def the_big_merge():
+    #results in csv file and json file
     pass
 
-# testing page parsing
-url = "http://www.boxofficemojo.com/movies/?id=biglebowski.htm"
-pickled = grab_pickle()
-pprint(page_parser(url, pickled=pickled[url]))
-# multple pages
-start_time = time.time()
-main_dict = read_main_dict()
-for index, item in enumerate(main_dict.values()):
-    if index == 100: break
-    url = item['boxofficemojo url']
-    records = page_parser(url, pickled=pickled[url])
-    pprint(url)
-    pprint(records['actors'])
-pprint("Checked {0} links in {1} seconds.".format(index, time.time() - start_time))
+refresh_masterdict()
 
+# # testing page parsing
+# url = "http://www.boxofficemojo.com/movies/?id=biglebowski.htm"
+# pickled = grab_pickle()
+# pprint(page_parser(url, pickled=pickled[url]))
+# # multple pages
+# start_time = time.time()
+# main_dict = read_main_dict()
+# total = len(main_dict)
+# for index, item in enumerate(main_dict.values()):
+#     if index == 100: break
+#     url = item['boxofficemojo url']
+#     url_fail_list = []
+#     try:
+#         records = page_parser(url, pickled=pickled[url])
+#     except:
+#         # if url can't be found in pickle
+#         url_fail_list.append(url)
+#     link_data_saver(url_fail_list, "url_parse_fail_log.txt")
+#     pprint("\n"+url)
+#     pprint(records['actors'])
+#     #status percent
+#     remaining = index / 100.0 * 100.0 #swap one of the 100 with total for full work
+#     sys.stdout.write("\r" + str(remaining) + "%")
+#     sys.stdout.flush()
+# pprint("Checked {0} links in {1} seconds.".format(index, time.time() - start_time))
 
+# # grab single pickled page
+# url='http://www.boxofficemojo.com/movies/?id=witherspoonvergara.htm'
+# try:
+#     debrine(url)
+# except:
+#     print(url + 'is a fail')
 
+# # pickle a single page
+# single_pickle()
 
 # examples
 # list_of_titles = [i.string for i in soup.find_all('a') if i['href'][:11] == "/movies/?id"]

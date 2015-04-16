@@ -48,7 +48,7 @@ def single_pickle(url=None, filename="page_data.pkl"):
     '''
     add a single pickle to try and repair sour pickles
     '''
-    if not url: url = str(input("sour url: "))
+    if not url: url = input("sour url (in quotes): ")
     temp_dict = grab_pickle(filename)
     try:
         page = urllib2.urlopen(url).read()
