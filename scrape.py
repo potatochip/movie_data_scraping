@@ -108,7 +108,7 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
     page = urllib2.urlopen(url) if pickled == None else pickled
     soup = BeautifulSoup(page)
 
-    headers = ["url", "runtime", "rating", "genres"]
+    headers = ["url", "runtime", "rating", "genres", "actors"]
     # title_string = soup.find('title').text
     # title_string.split("(")[0].strip()
     try:
@@ -116,11 +116,13 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
         runtime = unicode(get_movie_value(soup, "Runtime"))
     except:
         print("\n"+"*RUNTIME FAIL: "+url)
+        runtime = "n/a"
     try:
         #grab rating
         rating =  unicode(get_movie_value(soup, "MPAA Rating"))
     except:
         print("\n"+"*RATING FAIL: "+url)
+        rating = 'n/a'
     try:
         #grab genre
         temp = soup.find_all('a', href=re.compile("/genres/chart/"))
@@ -130,24 +132,63 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
         # if not genres: raise Exception
     except:
         print("\n"+"*GENRE FAIL: "+url)
-    # try:
-    #     #grab actors
-    #     actors_block = soup.find(text=re.compile("Actors:")).next.next
-    #     actors_string = actors_block.text
-    #     name_list = [a for a in re.split(r'([A-Z][a-z]*)', actors_string) if a]
-    #     for name in name_list:
+    try:
+        #grab actors
+        try:
+            actors_block = soup.find(text=re.compile("Actors:")).next.next
+        except:
+            try:
+                actors_block = soup.find(text=re.compile("Actor:")).next.next
+            except:
+                print("\n"+"*NO ACTORS FOUND: "+url)
+        actors_string = actors_block.text
+        messy_list = [a for a in re.split(r'([A-Z][a-z]*)', actors_string) if a]
+        # [u'Jeff', u' ', u'Bridges', u'John', u' ', u'Goodman', u'Julianne', u' ', u'Moore', u'Steve', u' ', u'Buscemi', u'Philip', u' ', u'Seymour', u' ', u'Hoffman', u'Tara', u' ', u'Reid', u'Sam', u' ', u'Elliott', u'* (', u'Narrator', u')']
+        name_list = []
+        previous_name = None
+        temp_name = ""
+        messy_length = len(messy_list)
+        #fix that mess
+        error_list = [u' ', u"'", u'-', u'. ', u'Mc', u'Mac', u'De', u'Di', u'Da', u'Du', u' the ']
+        for index, name in enumerate(messy_list):
+            if name == "'" or name == '-':
+                pass
+            elif name not in error_list and previous_name not in error_list:
+                name_list.append(temp_name)
+                temp_name = ""
+            elif index == messy_length-1:
+                temp_name += name
+                name_list.append(temp_name)
+            temp_name += name
+            previous_name = name
+        name_list = filter(None, name_list)
+        first_pass = name_list
+        #remove any asterisks
+        for index, item in enumerate(name_list):
+            if item == u'* (':
+                first_pass = name_list[:index]
+                break
+        second_pass = first_pass
+        for index, item in enumerate(first_pass):
+            if item == u'*':
+                second_pass.pop(index)
+            if item == u'.*':
+                second_pass.pop(index)
+                second_pass[index-1] += '.'
+        third_pass = second_pass
+        # open_paren_index = 0
+        # dot_open_index = 0
+        # close_paren_index = 0
+        # for index, item in enumerate(third_pass):
+        #     if item == '. (':
 
-    #     # caps_list = [word for word in actors_string if word[0].isupper() ]
-    #     actors = unicode()
-    # except:
-    #     print("\n"+"*ACTOR FAIL: "+url)
-    # grab the <a> tags and the <br> tags and combine
-
-    return dict(zip(headers, [url, runtime, rating, genres]))
+        actors = third_pass
+    except:
+        actors = []
+    return dict(zip(headers, [url, runtime, rating, genres, actors]))
 
 def refresh_masterdict():
     boxofficemojo_error_correction(movie_links())
-
 
 def pickle_boxofficemojo_pages():
     list_of_links = [item['boxofficemojo url'] for item in read_main_dict().values()]
@@ -164,11 +205,12 @@ pprint(page_parser(url, pickled=pickled[url]))
 # multple pages
 start_time = time.time()
 main_dict = read_main_dict()
-print(read_main_dict()[''])
 for index, item in enumerate(main_dict.values()):
-    if index == 10: break
+    if index == 100: break
     url = item['boxofficemojo url']
-    pprint(page_parser(url, pickled=pickled[url]))
+    records = page_parser(url, pickled=pickled[url])
+    pprint(url)
+    pprint(records['actors'])
 pprint("Checked {0} links in {1} seconds.".format(index, time.time() - start_time))
 
 
