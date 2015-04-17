@@ -2,10 +2,25 @@ import urllib2
 import re
 import sys
 import json
+import csv
 from pprint import pprint
 import time
 from bs4 import BeautifulSoup, SoupStrainer
 from brinery import *
+
+# def csv_writer(datadict, filename="boxofficemojo_final_csv"):
+#     writer = csv.writer(open(filename,'wb'))
+#     for item in datadict.values():
+#         line = []
+#         for k,v in item.iteritems():
+#             ln.append
+
+# for key, value in d.iteritems():
+#     ln = [key]
+#     for ik, iv in value.iteritems():
+#         ln.append(ik)
+#         ln.extend([v for v in iv])
+#     writer.writerow(ln)
 
 
 def link_data_saver(linklist, filename="boxofficemojo_link_data.txt"):
@@ -14,13 +29,13 @@ def link_data_saver(linklist, filename="boxofficemojo_link_data.txt"):
             txt_file.write(item.encode("UTF-8"))
             txt_file.write("\n")
 
-def movie_data_saver(datadict):
-    with open("boxofficemojo_movie_data.json", "wb") as json_file:
+def movie_data_saver(datadict, filename="boxofficemojo_movie_data.json"):
+    with open(filename, "wb") as json_file:
         newData = json.dumps(datadict, sort_keys=True, indent=4) 
         json_file.write(newData) 
 
-def read_main_dict():
-    with open("boxofficemojo_movie_data.json", "rb") as json_file:
+def read_main_dict(url="boxofficemojo_movie_data.json"):
+    with open(url, "rb") as json_file:
         return json.load(json_file)
 
 def list_splitter(list, size=7):
@@ -115,7 +130,7 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
     link_data_saver(url_fail_list, "url_parse_fail_log.txt")
     soup = BeautifulSoup(page)
 
-    headers = ["url", "runtime", "rating", "genres", "actors"]
+    headers = ["runtime", "rating", "genres", "actors"]
     # title_string = soup.find('title').text
     # title_string.split("(")[0].strip()
     try:
@@ -193,7 +208,7 @@ def page_parser(url="http://www.boxofficemojo.com/movies/?id=biglebowski.htm", p
         actors = second_pass
     except:
         actors = []
-    return dict(zip(headers, [url, runtime, rating, genres, actors]))
+    return dict(zip(headers, [runtime, rating, genres, actors]))
 
 def refresh_masterdict():
     boxofficemojo_error_correction(movie_links())
@@ -204,10 +219,36 @@ def pickle_boxofficemojo_pages():
     print("\nSour pickle jar: "+str( brine_time(list_of_links, cap=10) ))
 
 def the_big_merge():
-    #results in csv file and json file
-    pass
+    #results in csv file and new json file
+    master_dict = read_main_dict()
+    pickled = grab_pickle()
+    temp_dict = {}
+    url_fail_list = []
+    start_time = time.time()
+    total = len(master_dict)
+    test_count = 100.0
+    for index, item in enumerate(master_dict.values()):
+        # if index == test_count: break
+        url = item['boxofficemojo url']
+        try:
+            temp_dict[item['title']] = item
+            records = page_parser(url, pickled[url])
+            temp_dict[item['title']].update(records)
+            # temp_dict[item['title']] = entry
+        except:
+            # if url can't be found in pickle
+            url_fail_list.append(url)
+        #status percent
+        remaining = index / (total * 100.0)
+        sys.stdout.write("\r" + str(remaining) + "%")
+        sys.stdout.flush()
+    movie_data_saver(temp_dict, "boxofficemojo_final_dictionary.json")
+    # csv_writer(temp_dict)
+    link_data_saver(url_fail_list, "url_parse_fail_log.txt")
+    pprint("Merged {0} links in {1} seconds.".format(index, time.time() - start_time))
 
-refresh_masterdict()
+the_big_merge()
+
 
 # # testing page parsing
 # url = "http://www.boxofficemojo.com/movies/?id=biglebowski.htm"
