@@ -8,19 +8,10 @@ import time
 from bs4 import BeautifulSoup, SoupStrainer
 from brinery import *
 
-# def csv_writer(datadict, filename="boxofficemojo_final_csv"):
-#     writer = csv.writer(open(filename,'wb'))
-#     for item in datadict.values():
-#         line = []
-#         for k,v in item.iteritems():
-#             ln.append
-
-# for key, value in d.iteritems():
-#     ln = [key]
-#     for ik, iv in value.iteritems():
-#         ln.append(ik)
-#         ln.extend([v for v in iv])
-#     writer.writerow(ln)
+def csv_writer(datalist, filename="boxofficemojo_final_csv"):
+    writer = csv.writer(open(filename,'wb'))
+    for row in datalist:
+        writer.writerow(row)
 
 
 def link_data_saver(linklist, filename="boxofficemojo_link_data.txt"):
@@ -91,6 +82,7 @@ def boxofficemojo_error_correction(main_dict=read_main_dict()):
     temp_dict['Waiting for "Superman"']['title'] = 'Waiting for "Superman"'
     temp_dict['Offender']['studio'] = 'n/a'
     temp_dict['Toy Story 2 (3D)']['studio'] = 'BV'
+    temp_dict["Cheech and Chong's Corsican Bros."]['boxofficemojo url'] = "http://www.boxofficemojo.com/movies/?id=cheechandchongscorsicanbros.htm"
     #below not working, whatev. editing manually
     #getting Traceback (most recent call last):
         #   File "scrape.py", line 142, in <module>
@@ -222,7 +214,9 @@ def the_big_merge():
     #results in csv file and new json file
     master_dict = read_main_dict()
     pickled = grab_pickle()
-    temp_dict = {}
+    dict_for_json = {}
+    csv_headers = ['title', 'runtime', 'rating', 'studio','opening date', 'opening gross', 'opening theaters', 'total gross', 'total theaters', 'boxofficemojo url'] # does not include 'genres', 'actors' because they are a list
+    list_for_csv = csv_headers[:]
     url_fail_list = []
     start_time = time.time()
     total = len(master_dict)
@@ -231,23 +225,35 @@ def the_big_merge():
         # if index == test_count: break
         url = item['boxofficemojo url']
         try:
-            temp_dict[item['title']] = item
+            dict_for_json[item['title']] = item
             records = page_parser(url, pickled[url])
-            temp_dict[item['title']].update(records)
-            # temp_dict[item['title']] = entry
+            dict_for_json[item['title']].update(records)
+            temp_list = []
+            temp_list.append(item['title'])
+            temp_list.append(item['runtime'])
+            temp_list.append(item['rating'])
+            temp_list.append(item['studio'])
+            temp_list.append(item['opening date'])
+            temp_list.append(item['opening gross'])
+            temp_list.append(item['opening theaters'])
+            temp_list.append(item['total gross'])
+            temp_list.append(item['total theaters'])
+            temp_list.append(item['boxofficemojo url'])
+            list_for_csv.append(temp_list)
         except:
             # if url can't be found in pickle
             url_fail_list.append(url)
         #status percent
         remaining = index / (total * 100.0)
-        sys.stdout.write("\r" + str(remaining) + "%")
+        sys.stdout.write("\r" + str(remaining) + "% ")
         sys.stdout.flush()
-    movie_data_saver(temp_dict, "boxofficemojo_final_dictionary.json")
-    # csv_writer(temp_dict)
+    movie_data_saver(dict_for_json, "boxofficemojo_final_dictionary.json")
+    csv_writer(list_for_csv)
     link_data_saver(url_fail_list, "url_parse_fail_log.txt")
     pprint("Merged {0} links in {1} seconds.".format(index, time.time() - start_time))
 
 the_big_merge()
+
 
 
 # # testing page parsing
