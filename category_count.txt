@@ -1,0 +1,268 @@
+Unknown                                               2262
+Foreign Language                                      1804
+Foreign                                               1728
+Drama                                                 1437
+Documentary                                           1405
+Comedy                                                1400
+Romantic Comedy                                        573
+Animation                                              510
+Horror                                                 462
+Thriller                                               461
+Comedy / Drama                                         431
+Gay / Lesbian                                          329
+3D                                                     321
+Action                                                 304
+Romance                                                279
+Drama / Thriller                                       219
+Crime Drama                                            197
+Musical                                                197
+Western                                                194
+Romantic Drama                                         192
+IMAX (Feature-length)                                  180
+Period Drama                                           176
+Action Comedy                                          171
+Comic Book Adaptation                                  167
+Family Comedy                                          166
+Action - Martial Arts                                  161
+Sports Drama                                           151
+Animation - Computer                                   144
+Horror - Supernatural                                  143
+Horror Comedy                                          139
+Family Adventure                                       139
+Music Drama                                            138
+Action / Adventure                                     137
+Drama - Summer                                         134
+Hollywood / Movies                                     132
+Documentary - Political                                125
+Superhero                                              123
+Crime Comedy                                           120
+Spy                                                    119
+Christian                                              119
+Fantasy - Live Action                                  117
+Crime Time                                             116
+Comedy - R-Rated Youth                                 115
+Action Thriller                                        115
+Heist / Caper                                          103
+Crime Thriller                                         103
+Horror - Slasher                                       100
+Foreign / Action                                        99
+Dance                                                   97
+Fantasy                                                 96
+Horror Thriller                                         92
+War                                                     91
+Sci-Fi Action                                           90
+Family                                                  87
+Sci-Fi Horror                                           87
+TV Adaptation (Live Action)                             85
+Comedy - Dark/Black                                     85
+Sports Comedy                                           83
+Family - Children's Book Adaptation                     82
+Future - Near                                           81
+Action - Buddy Comedy                                   80
+Vampire                                                 80
+Sci-Fi - Adventure                                      80
+Creature Feature                                        80
+IMAX                                                    79
+Adventure - Period                                      78
+Fantasy Comedy                                          77
+Hitman / Assassin                                       77
+Sci-Fi Comedy                                           76
+Adventure                                               75
+Christmas                                               74
+Neo Noir                                                72
+Comedy - Spoof                                          71
+Revenge                                                 71
+War Drama                                               70
+Action Drama                                            69
+Action Heroine                                          69
+Horror Remake                                           69
+War - World War 2                                       68
+That '70s Movie                                         68
+Irish                                                   68
+Comedy - High School                                    68
+Sci-Fi Adventure                                        67
+Sci-Fi - Based on Book                                  66
+Animation - Fantasy                                     65
+Fantasy Drama                                           65
+Historical Drama                                        64
+Zombie                                                  63
+Dog                                                     63
+Thriller - Political                                    63
+Slacker / Stoner                                        63
+Period Adventure                                        61
+Thriller - Serial Killer                                61
+Pop Star Debuts                                         59
+Time Travel                                             59
+Teen Romance                                            58
+Young-Adult Book Adaptations                            58
+Cyborg / Android / Robot                                58
+Romantic Thriller                                       57
+Family - Animal (Live action)                           57
+Comedy - Road Trip                                      57
+Wedding                                                 57
+Animation - Anime                                       55
+Concert                                                 55
+Thriller - Erotic                                       55
+Con Artist / Hustler                                    55
+Comedy - College                                        55
+Sci-Fi Thriller                                         54
+Comedy Thriller                                         53
+True Crime                                              53
+Action / Crime                                          52
+Post-Apocalypse                                         51
+Romantic Fantasy                                        51
+Sci-Fi                                                  51
+Sci-Fi - Alien Invasion                                 51
+Period Comedy                                           50
+Terrorism                                               50
+Off-Screen Couples On-Screen                            49
+Disaster                                                49
+Sports - Boxing                                         48
+Environmentalist                                        48
+Hostage                                                 48
+Animation - Sci-Fi                                      48
+Mother                                                  48
+Comedy Remake                                           48
+Sports - Extreme                                        47
+Pilot / Aircraft                                        47
+News/Broadcasting                                       47
+Sports - Baseball                                       46
+Travelogue - Paris                                      46
+Sports - Basketball                                     46
+Travelogue - Middle East                                43
+Animation - TV Adaptation                               42
+Biopic - Music                                          42
+Controversy                                             42
+Sports - Football                                       41
+Remake - Foreign Thrills                                40
+Sci-Fi Chase                                            40
+Mockumentary                                            40
+Action Horror                                           40
+Video Game Adaptation                                   40
+CGI Star                                                40
+Cross Dressing / Gender Bending                         39
+Crime                                                   39
+Sports - Period                                         39
+Sundance 2014                                           38
+Teacher - Other Movies with Teachers as Main Roles      38
+Comedy - Bumbling                                       38
+Thriller - Psycho / Stalker / Blank from Hell           38
+Comedy - What If?                                       38
+School - Prep / Boarding / Catholic                     38
+Comedy - Fish-Out-of-Water Father                       38
+Remake - French                                         38
+President                                               37
+Prequel                                                 36
+Cannes Film Festival - Palme D'Or winners               35
+Family - Talking Animal (Live action)                   35
+Rap / Rapper                                            35
+Car Racing                                              35
+Comedy - Spy                                            35
+Christmas - Setting Only                                35
+Cop - Dirty                                             34
+Political Campaign / Election                           34
+Medieval Times                                          34
+Political Satire                                        34
+TV Cartoon (Live Action)                                33
+Sword and Sorcery                                       32
+Foreign / Horror                                        31
+Drama - Kidnapping                                      31
+Pregnancy                                               31
+Horse                                                   31
+Horror - Torture                                        30
+Found Footage                                           30
+Horror - Period                                         30
+Music Concert                                           30
+Sports - Coach                                          30
+Sundance 2012                                           29
+Family - Remake                                         29
+Thriller - On the Run                                   29
+Memory Loss / Amnesia                                   29
+Twentysomething                                         29
+Documentary - Nature                                    29
+Superhero - Origin                                      29
+Womanizer / Cad / Player                                28
+Sports - Surfing                                        27
+Toy Adaptation                                          27
+Werewolf                                                27
+Action - Wire-Fu                                        27
+Summer Girl Power                                       27
+Historical Epic                                         27
+Sundance 2011                                           26
+Twins                                                   26
+Sci-Fi Remake                                           26
+Comedy - Fat Suit                                       26
+Comedy - Music                                          26
+Travelogue - New Orleans                                25
+Remake - Asian                                          25
+Treasure Hunt                                           25
+Disability - Paraplegic / Quadriplegic                  25
+Sports - Soccer                                         25
+Romantic Comedy - Fantasy                               24
+Reality TV                                              24
+Mouse/Rat - Featured                                    24
+Comedy - Arrested Development                           24
+Mindbender                                              24
+Remake - Sequel to a Remake                             24
+Pirate                                                  24
+Stand-Up Comedy Concert                                 24
+Travelogue - New Jersey                                 24
+Teacher - Inspirational                                 24
+Action Remake                                           24
+Adventure Remake                                        24
+Sundance 2013                                           23
+Travelogue - Las Vegas                                  23
+Travelogue - Mexico                                     23
+Adventure - Desert                                      23
+Adventure Comedy                                        22
+Sci-Fi Fantasy                                          22
+Travelogue - Boston                                     22
+Swashbuckler                                            22
+Man vs. Machine                                         21
+Crime - Romantic Comedy                                 21
+Cooking                                                 21
+Horror Anthology                                        20
+New Year's                                              20
+Western Comedy                                          20
+Horror - Terror in the Water                            19
+Thanksgiving                                            19
+Virtual Reality                                         19
+Cinderella Complex                                      18
+Puppet / Puppetry                                       18
+Travelogue - Italy                                      18
+Comedy - God                                            18
+Animation - Stop Motion                                 18
+TV Kids Show (Live Action)                              17
+Sports - Hockey                                         17
+Period Action                                           17
+Superhero - Comedy                                      17
+Explorer                                                17
+Action Fantasy                                          16
+Travelogue - Japan                                      16
+Fire / Firefighter                                      15
+Witch                                                   15
+Underwater                                              15
+War - World War I                                       14
+Comedy - Body Switch                                    14
+Sports - Football (Featured)                            14
+Period Horror                                           14
+Dinosaur                                                14
+Sports - Olympics                                       14
+Travelogue - Hawaii                                     14
+Toys Come to Life                                       13
+Mouse / Rat                                             13
+Taxi / Taxi Driver                                      12
+Dragon - Supporting Role                                11
+Sci-Fi - Satire                                         11
+Dragon - Focal Point of Movie                           11
+Shark                                                   11
+Sports Action                                           11
+Sports - Golf                                           11
+Submarine                                               10
+Global Warming                                           8
+War Romance                                              7
+Animation - Motion Capture                               7
+Romantic Adventure                                       7
+Remake - British                                         6
+Sports                                                   2
+dtype: int64

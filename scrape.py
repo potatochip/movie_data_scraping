@@ -1,3 +1,4 @@
+from __future__ import division
 import urllib2
 import re
 import sys
@@ -8,22 +9,35 @@ import time
 from bs4 import BeautifulSoup, SoupStrainer
 from brinery import *
 
+def emergency_pickle(data, filename):
+    f = filename+".recovery.pkl"
+    dump_pickle(data,f)
+    print("*EMERGENCY PICKLE DUMP TO {0}*".format(f))
+
 def csv_writer(datalist, filename="boxofficemojo_final_csv"):
     writer = csv.writer(open(filename,'wb'))
-    for row in datalist:
-        writer.writerow(row)
-
+    try:
+        for row in datalist:
+            writer.writerow([unicode(s).encode("utf-8") for s in row])
+    except:
+        emergency_pickle()
 
 def link_data_saver(linklist, filename="boxofficemojo_link_data.txt"):
-    with open(filename, "wb") as txt_file:
-        for item in linklist: 
-            txt_file.write(item.encode("UTF-8"))
-            txt_file.write("\n")
+    try:
+        with open(filename, "wb") as txt_file:
+            for item in linklist: 
+                txt_file.write(item.encode("UTF-8"))
+                txt_file.write("\n")
+    except:
+        emergency_pickle()
 
 def movie_data_saver(datadict, filename="boxofficemojo_movie_data.json"):
-    with open(filename, "wb") as json_file:
-        newData = json.dumps(datadict, sort_keys=True, indent=4) 
-        json_file.write(newData) 
+    try:
+        with open(filename, "wb") as json_file:
+            newData = json.dumps(datadict, sort_keys=True, indent=4) 
+            json_file.write(newData)
+    except:
+        emergency_pickle()
 
 def read_main_dict(url="boxofficemojo_movie_data.json"):
     with open(url, "rb") as json_file:
@@ -213,7 +227,7 @@ def pickle_boxofficemojo_pages():
 def the_big_merge():
     #results in csv file and new json file
     master_dict = read_main_dict()
-    pickled = grab_pickle()
+    pickled = grab_pickle("page_data.pkl")
     dict_for_json = {}
     csv_headers = ['title', 'runtime', 'rating', 'studio','opening date', 'opening gross', 'opening theaters', 'total gross', 'total theaters', 'boxofficemojo url'] # does not include 'genres', 'actors' because they are a list
     list_for_csv = csv_headers[:]
@@ -244,7 +258,7 @@ def the_big_merge():
             # if url can't be found in pickle
             url_fail_list.append(url)
         #status percent
-        remaining = index / (total * 100.0)
+        remaining = index / total * 100.0
         sys.stdout.write("\r" + str(remaining) + "% ")
         sys.stdout.flush()
     movie_data_saver(dict_for_json, "boxofficemojo_final_dictionary.json")
