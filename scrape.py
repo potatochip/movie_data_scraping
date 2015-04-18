@@ -70,7 +70,18 @@ def link_grabber(url, base_url="http://www.boxofficemojo.com"):
         opening_gross = unicode(item[4].string)
         opening_theaters = unicode(item[5].string)
         opening_date = unicode(item[6].string)
-        link_dict.update({title: {"boxofficemojo url": base_url + link, "title":title, "studio":studio, "total gross":total_gross, "total theaters":total_theaters, "opening gross": opening_gross, "opening theaters":opening_theaters, "opening date":opening_date}})
+        if title in link_dict:
+            try:
+                #change original
+                new_title = link_dict[title]['opening date'][-4:]
+                link_dict[new_title] = link_dict.pop(title)
+                #change conflict
+                link_dict.update({"{0} ({1})".format(title, opening_date[-4:]): {"boxofficemojo url": base_url + link, "title":title, "studio":studio, "total gross":total_gross, "total theaters":total_theaters, "opening gross": opening_gross, "opening theaters":opening_theaters, "opening date":opening_date}})
+            except:
+                #likley if there is no date
+                print("problem with " + link)
+        else:
+            link_dict.update({title: {"boxofficemojo url": base_url + link, "title":title, "studio":studio, "total gross":total_gross, "total theaters":total_theaters, "opening gross": opening_gross, "opening theaters":opening_theaters, "opening date":opening_date}})
     return link_dict
 
 def movie_links(base_url="http://www.boxofficemojo.com"):
@@ -266,7 +277,8 @@ def the_big_merge():
     link_data_saver(url_fail_list, "url_parse_fail_log.txt")
     pprint("Merged {0} links in {1} seconds.".format(index, time.time() - start_time))
 
-the_big_merge()
+refresh_masterdict()
+# the_big_merge()
 
 
 
