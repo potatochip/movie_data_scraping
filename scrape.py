@@ -14,7 +14,7 @@ def emergency_pickle(data, filename):
     dump_pickle(data,f)
     print("*EMERGENCY PICKLE DUMP TO {0}*".format(f))
 
-def csv_writer(datalist, filename="boxofficemojo_final_csv"):
+def csv_writer(datalist, filename="boxofficemojo_final.csv"):
     writer = csv.writer(open(filename,'wb'))
     try:
         for row in datalist:

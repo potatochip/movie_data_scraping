@@ -30,8 +30,8 @@ def link_data_saver(linklist, filename="moviebodycounts_link_data.txt"):
     except:
         emergency_pickle()
 
-def read_main_dict(url="moviebodycounts_movie_data.json"):
-    with open(url, "rb") as json_file:
+def read_main_dict(filename="moviebodycounts_movie_data.json"):
+    with open(filename, "rb") as json_file:
         return json.load(json_file)
 
 def link_grabber(url, base_url="http://moviebodycounts.com/"):
@@ -139,9 +139,24 @@ def page_parser(url, pickled=None):
 
 def compare_titles():
     #compare the titles here with those from boxoffimojo to make sure they match up. make a list of errors
-    print("Conflict with the title: {0}".format(title))
-    correct_name = input("What should we call the moviebodycount title?: ")
-    pass
+    # use post cleanup file
+    moviebodycounts_dict = read_main_dict()
+    boxofficemojo_dict = read_main_dict("boxofficemojo_final_dictionary.json")
+    temp_dict = {}
+    for title in moviebodycounts_dict:
+        name = title
+        while name not in boxofficemojo_dict:
+            print("Can't find title: {0}".format(title))
+            try:
+                name = input("What should we call the moviebodycount title?: ")
+            except:
+                print("Put the name in quotes")
+            if name is 'skip': break
+        print("name is in!")
+        temp_dict[name] = moviebodycounts_dict[title]
+    movie_data_saver(temp_dict, "moviebodycounts_final_movie_data.json")
+
+compare_titles()
 
 # ## create final dictionary
 # pickled = grab_pickle('movie_body_count_pages.pkl')
