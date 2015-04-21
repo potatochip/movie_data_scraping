@@ -42,7 +42,7 @@ def link_grabber(url, base_url="http://moviebodycounts.com/"):
     page = urllib2.urlopen(url)
     soup = BeautifulSoup(page)
     all_rows = soup.find(src='graphic-movies.jpg').parent.next_sibling.next_sibling.next_sibling.next_sibling.find_all('a')
-    # does not account for when , the is followed by other information like '(1980)'
+    # does not account for when the ',' is followed by other information like '(1980)'
     #swap 'the' to the beginning when title ends with ', the'
     row_values = {(lambda x: 'The '+x[:-5] if x[-5:] == ', The' else x)(i.text) :i['href'] for i in all_rows}
     #swap "a" to the beginning
@@ -140,7 +140,7 @@ def page_parser(url, pickled=None):
 def compare_titles():
     #compare the titles here with those from boxoffimojo to make sure they match up. make a list of errors
     # use post cleanup file
-    moviebodycounts_dict = read_main_dict()
+    moviebodycounts_dict = read_main_dict("moviebodycounts_final_movie_data.json")
     boxofficemojo_dict = read_main_dict("boxofficemojo_final_dictionary.json")
     temp_dict = {}
     for title in moviebodycounts_dict:
@@ -151,10 +151,13 @@ def compare_titles():
                 name = input("What should we call the moviebodycount title?: ")
             except:
                 print("Put the name in quotes")
-            if name is 'skip': break
-        print("name is in!")
-        temp_dict[name] = moviebodycounts_dict[title]
-    movie_data_saver(temp_dict, "moviebodycounts_final_movie_data.json")
+            if name is 's': break
+        if name is 's':
+            pass
+        else:
+            print("name is in!")
+            temp_dict[name] = moviebodycounts_dict[title]
+    movie_data_saver(temp_dict, "moviebodycounts_final_movie_data_corrected.json")
 
 compare_titles()
 
