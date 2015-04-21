@@ -1,0 +1,61 @@
+{'Horror':4}
+{'Action':3}
+{'Crime Drama':2}
+{'Western':2}
+{'Action Comedy':2}
+{'Comic Book Adaptation':3}
+{'Action - Martial Arts':3}
+{'Horror - Supernatural':4}
+{'Horror Comedy':4}
+{'Action / Adventure':2}
+{'Superhero':3}
+{'Crime Comedy':2}
+{'Action Thriller':2}
+{'Horror - Slasher':4}
+{'Horror Thriller':4}
+{'War':4}
+{'Sci-Fi Horror':4}
+{'Vampire':4}
+{'Creature Feature':3}
+{'Hitman / Assassin':3}
+{'Revenge':2}
+{'War Drama':4}
+{'Action Drama':2}
+{'Action Heroine':2}
+{'Horror Remake':4}
+{'War - World War 2':4}
+{'Zombie':4}
+{'Thriller - Serial Killer':2}
+{'True Crime':2}
+{'Action / Crime':2}
+{'Sci-Fi - Alien Invasion':3}
+{'Terrorism':3}
+{'Disaster':2}
+{'Hostage':2}
+{'Action Horror':4}
+{'Video Game Adaptation':4}
+{'Crime':2}
+{'Thriller - Psycho / Stalker / Blank from Hell':2}
+{'Sword and Sorcery':3}
+{'Drama - Kidnapping':2}
+{'Horror - Torture':4}
+{'Horror - Period':4}
+{'Superhero - Origin':2}
+{'Werewolf':4}
+{'Action - Wire-Fu':3}
+{'Pirate':3}
+{'Action Remake':3}
+{'Swashbuckler':3}
+{'Man vs. Machine':3}
+{'Horror Anthology':4}
+{'Horror - Terror in the Water':4}
+{'Period Action':2}
+{'Superhero - Comedy':2}
+{'Action Fantasy':2}
+{'Witch':3}
+{'War - World War I':4}
+{'Period Horror':4}
+{'Dragon - Supporting Role':2}
+{'Dragon - Focal Point of Movie':3}
+{'Shark':2}
+{'Sports Action':2}
